@@ -1,5 +1,8 @@
 <script setup>
     import {ref} from 'vue';
+    import { useFavoritesStore } from '@/stores/favorites';
+
+    const favoriteStore = useFavoritesStore();
 
     const movies = ref([
         {id:1, title: '인셉션', rating: 9.5},
@@ -9,17 +12,35 @@
 
 <template>
     <main class="page">
-        <h1>🎬 영화 목록</h1>
+        <div class="header-area">
+            <h1>🎬 영화 목록</h1>
+             <button @click="favoriteStore.clearAllFavorites" class="clear-btn">
+            🗑️ 찜 목록 전체 비우기
+            </button>
+        </div>
         <ul>
-            <li v-for="movie in movies" :key="movie.id">
-                {{ movie.title }} (⭐️ {{ movie.rating}})
+            <li v-for="movie in movies" :key="movie.id" class="movie-item">
+                <span class="movie-info">{{ movie.title }} (⭐️ {{ movie.rating}})</span>
+                <button @click="favoriteStore.toggleFavorite(movie)" class="fav-btn">
+                    {{ favoriteStore.favoriteMovies.some(m => m.id === movie.id) ? '❤️ 찜 취소': '🤍 찜하기' }}
+                </button>
             </li>
         </ul>
     </main>
 </template>
 
 <style scoped>
-.page {padding: 40px;}
+.page {padding: 40px; max-width:800px; margin: 0 auto;}
+.header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
 ul {list-style: none; padding: 0;}
+.movie-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #ddd; font-size: 18px;}
+.fav-btn{
+    padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; background-color: #ffdde1; font-weight: bold; transition: 0.2s;
+}
+.fav-btn:hover { background-color: #ffc0cb;}
+.clear-btn {
+    padding: 8px 15px; border: none; border-radius: 4px; background-color: #555; color: white; cursor: pointer; font-weight: bold;
+}
+.clear-btn:hover{background-color: #333;}
 li {padding: 10px; border-bottom: 1px solid #ddd; font-size: 18px;}
 </style>
